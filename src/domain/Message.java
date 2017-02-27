@@ -4,21 +4,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Clase que representa la entidad Message
+ * Clase que representa la entidad Mensaje
  *
  * @author Matias Crizul
  */
 public class Message {
 
     private int id;
-    private String clientOrigin;
-    private String clientDestination;
+    private Client clientOrigin;
+    private Client clientDestination;
     private double money;
     private String mac;
     private boolean integrity;
     private Date date;
 
-    public Message(int id, String clientOrigin, String clientDestination, double money, String mac, boolean integrity, Date date) {
+    public Message(int id, Client clientOrigin, Client clientDestination, double money, String mac, boolean integrity, Date date) {
         this.id = id;
         this.clientOrigin = clientOrigin;
         this.clientDestination = clientDestination;
@@ -36,19 +36,19 @@ public class Message {
         this.id = id;
     }
 
-    public String getClientOrigin() {
+    public Client getClientOrigin() {
         return clientOrigin;
     }
 
-    public void setClientOrigin(String clientOrigin) {
+    public void setClientOrigin(Client clientOrigin) {
         this.clientOrigin = clientOrigin;
     }
 
-    public String getClientDestination() {
+    public Client getClientDestination() {
         return clientDestination;
     }
 
-    public void setClientDestination(String clientDestination) {
+    public void setClientDestination(Client clientDestination) {
         this.clientDestination = clientDestination;
     }
 
@@ -87,7 +87,7 @@ public class Message {
     public String toString() {
         String formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(getDate());
         String integrityStr = this.isIntegrity() ? "Yes" : "No";
-        return "Origin: " + this.getClientOrigin() + " | Destination: " + this.getClientDestination() + " | Money: " + this.getMoney()
-                + " | Integrity: " + integrityStr + " | " + "Date: " + formatted;
+        return "Origin: " + this.getClientOrigin().toString() + " | Destination: " + this.getClientDestination().toString()
+                + " | Money: " + this.getMoney() + " | Integrity: " + integrityStr + " | " + "Date: " + formatted;
     }
 }
