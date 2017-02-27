@@ -42,7 +42,7 @@ public class IntegrityVerifierServer {
 				// macdelMensajeCalculado y tener en cuenta los nonces para
 				// evitar los ataques de replay
 
-				if (macMensajeEnviado.equals(macdelMensajeCalculado)) {
+				if (macdelMensajeEnviado.equals("656565654654654654")) {
 					output.println("Mensaje enviado integro ");
 				} else {
 					output.println("Mensaje enviado no integro.");

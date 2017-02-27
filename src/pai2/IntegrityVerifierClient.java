@@ -20,10 +20,10 @@ public class IntegrityVerifierClient {
 			// crea un PrintWriter para enviar mensaje/MAC al servidor
 			PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 			String userName = JOptionPane.showInputDialog(null, "Introduzca su mensaje:");
-			output.println(mensaje); // envio del mensaje al servidor
+			output.println(userName); // envio del mensaje al servidor
 			// habría que calcular el correspondiente MAC con la clave
 			// compartida por servidor/cliente
-			output.println(macdelMensaje);
+			output.println("656565654654654654");
 			output.flush();
 			// crea un objeto BufferedReader para leer la respuesta del servidor
 			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
