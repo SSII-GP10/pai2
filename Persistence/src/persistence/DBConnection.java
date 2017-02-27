@@ -22,7 +22,7 @@ public class DBConnection {
      */
     public static void createDB() throws SQLException {
         if (PATH == null) {
-            PATH = "jdbc:sqlite:db.db";
+            PATH = "jdbc:sqlite:./db.db";
             try {
                 Class.forName("org.sqlite.JDBC");
                 KPIRepository.createKPITable();

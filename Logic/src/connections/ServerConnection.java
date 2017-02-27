@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import javax.net.ServerSocketFactory;
 
 public class ServerConnection {
-    private ServerSocket socket;
+    /*private ServerSocket socket;
 
     public ServerConnection(int port) throws IOException {
         ServerSocketFactory socketFactory = (ServerSocketFactory)ServerSocketFactory.getDefault();
@@ -45,5 +45,5 @@ public class ServerConnection {
                 ioException.printStackTrace();
             }
         }
-    }
+    }*/
 }
