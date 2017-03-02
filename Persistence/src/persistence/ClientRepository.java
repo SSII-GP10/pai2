@@ -52,6 +52,14 @@ public class ClientRepository {
         }
     }
 
+    public static Client getClient(int id)
+            throws SQLException {
+        String sql = "SELECT * FROM CLIENT WHERE ID = '" + id + "';";
+        Collection<Client> result = runQuery(sql);
+        Client client = result.iterator().next();
+        return client;
+    }
+
     public static Client getClient(String numberAccount)
             throws SQLException {
         String sql = "SELECT * FROM CLIENT WHERE NumberAccount = '" + numberAccount + "';";

@@ -15,6 +15,10 @@ public class ClientManager {
         }
         return instance;
     }
+    
+    private ClientManager(){
+        
+    }
 
     public void addClient(Client client) throws SQLException {
         ClientRepository.insertClient(client);

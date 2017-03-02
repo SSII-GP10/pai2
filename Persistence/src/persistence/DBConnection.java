@@ -15,6 +15,7 @@ public class DBConnection {
             try {
                 Class.forName("org.sqlite.JDBC");
                 ClientRepository.createClientTable();
+                MessageRepository.createMessageTable();
                 KPIRepository.createKPITable();
             } catch (ClassNotFoundException | SQLException e) {
                 throw new SQLException("Error: Cant connect to DB.");

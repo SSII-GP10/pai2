@@ -1,36 +1,33 @@
 package view;
 
+import business.KPIRecolect;
+import business.KPIReport;
+import business.LogReport;
 import business.ServerConfig;
-import connections.ServerConnection;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ViewServer {
-    
+
     private ServerConfig serverConfig;
-    
-    public ViewServer(){
+
+    public ViewServer() {
         serverConfig = ServerConfig.getInstance();
         readConfig();
     }
 
     public void start() {
         System.out.println("Starting server...");
-        ServerConnection connection = new ServerConnection(serverConfig.getPort());
-        try {
-            connection.openServer();
-            while(true){
-                connection.openConnections();
-                // lanzar hilo
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(ViewServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        ScheduledExecutorService timer = Executors.newScheduledThreadPool(3);
+        timer.scheduleAtFixedRate(new LogReport(), 0, 1, TimeUnit.MINUTES);
+        timer.scheduleAtFixedRate(new KPIRecolect(), 0, 1, TimeUnit.MINUTES);
+        timer.scheduleAtFixedRate(new KPIReport(), 0, 5, TimeUnit.MINUTES);
     }
-    
-    public void readConfig(){
+
+    public void readConfig() {
         try {
             serverConfig.readConfig();
         } catch (IOException | SQLException ex) {

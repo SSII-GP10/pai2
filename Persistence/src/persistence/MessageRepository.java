@@ -31,9 +31,9 @@ public class MessageRepository {
                     + "Money DOUBLE NOT NULL,"
                     + "Mac TEXT NOT NULL,"
                     + "Integrity BOOLEAN NOT NULL,"
-                    + "Date TEXT NOT NULL," 
-                    +" FOREIGN KEY(ClientOrigin) REFERENCES CLIENT(ID),"
-                    +" FOREIGN KEY(ClientDestination) REFERENCES CLIENT(ID)"
+                    + "Date TEXT NOT NULL,"
+                    + " FOREIGN KEY(ClientOrigin) REFERENCES CLIENT(ID),"
+                    + " FOREIGN KEY(ClientDestination) REFERENCES CLIENT(ID)"
                     + ")";
             stm.executeUpdate(query);
             stm.close();
@@ -43,10 +43,10 @@ public class MessageRepository {
     }
 
     public static void insertMessage(Message message) throws SQLException {
-        insertMessage(message.getClientOrigin(),message.getClientDestination(),message.getMoney(),message.getMac(),message.isIntegrity(),message.getDate());
+        insertMessage(message.getClientOrigin(), message.getClientDestination(), message.getMoney(), message.getMac(), message.isIntegrity(), message.getDate());
     }
 
-    public static void insertMessage(Client clientOrigin, Client clientDestination,Double money,String mac,Boolean integrity, Date date) throws SQLException {
+    public static void insertMessage(Client clientOrigin, Client clientDestination, Double money, String mac, Boolean integrity, Date date) throws SQLException {
         try {
             DBConnection.checkPath();
             Class.forName("org.sqlite.JDBC");
@@ -61,11 +61,11 @@ public class MessageRepository {
                     + "','"
                     + clientDestination.getId()
                     + "','"
-                    +money
+                    + money
                     + "','"
-                    +mac
+                    + mac
                     + "','"
-                    +integrity
+                    + integrity
                     + "','"
                     + formatted + "');";
             stm.executeUpdate(sql);
@@ -81,22 +81,37 @@ public class MessageRepository {
         String sql = "SELECT * FROM MESSAGE WHERE ID = '" + id + "';";
         return runQuery(sql);
     }
-    
-    public static Collection<Message> getSentMessages(Date date) throws SQLException{
-    	 String formatted = new SimpleDateFormat("yyyy-MM-dd")
-                 .format(date);
-    	String sql = "SELECT * FROM MESSAGE WHERE Date BETWEEN '"+formatted+" 00:00:00.000' AND '"+formatted+" 23:59:59.997';";
-    	return runQuery(sql);
-    }
-    public static Collection<Message> getMessagesWithNoIntegrity(Date date) throws SQLException{
-   	 String formatted = new SimpleDateFormat("yyyy-MM-dd")
+
+    public static Collection<Message> getSentMessages(Date date) throws SQLException {
+        String formatted = new SimpleDateFormat("yyyy-MM-dd")
                 .format(date);
-   	String sql = "SELECT * FROM MESSAGE WHERE (Date BETWEEN '"+formatted+" 00:00:00.000' AND '"+formatted+" 23:59:59.997')AND Integrity =='false';";
-   	return runQuery(sql);
-   }
+        String sql = "SELECT * FROM MESSAGE WHERE Date BETWEEN '" + formatted + " 00:00:00.000' AND '" + formatted + " 23:59:59.997';";
+        return runQuery(sql);
+    }
+
+    public static Collection<Message> getMessagesWithNoIntegrity(Date date) throws SQLException {
+        String formatted = new SimpleDateFormat("yyyy-MM-dd")
+                .format(date);
+        String sql = "SELECT * FROM MESSAGE WHERE (Date BETWEEN '" + formatted + " 00:00:00.000' AND '" + formatted + " 23:59:59.997') AND Integrity =='false';";
+        return runQuery(sql);
+    }
+
+    public static Collection<Message> getMessagesWithIntegrity(Date date) throws SQLException {
+        String formatted = new SimpleDateFormat("yyyy-MM-dd")
+                .format(date);
+        String sql = "SELECT * FROM MESSAGE WHERE (Date BETWEEN '" + formatted + " 00:00:00.000' AND '" + formatted + " 23:59:59.997') AND Integrity =='true';";
+        return runQuery(sql);
+    }
 
     public static Collection<Message> getAllMessages() throws SQLException {
         String sql = "SELECT * FROM MESSAGE;";
+        return runQuery(sql);
+    }
+    
+    public static Collection<Message> getAllMessages(Date date) throws SQLException {
+        String formatted = new SimpleDateFormat("yyyy-MM-dd")
+                .format(date);
+        String sql = "SELECT * FROM MESSAGE WHERE Date BETWEEN '" + formatted + " 00:00:00.000' AND '" + formatted + " 23:59:59.997';";
         return runQuery(sql);
     }
 
@@ -111,15 +126,15 @@ public class MessageRepository {
             ResultSet res = stm.executeQuery(sql);
             while (res.next()) {
                 Integer id = res.getInt("ID");
-                Client clientOrigin = new ArrayList<Client>(ClientRepository.getClient(res.getInt("ClientOrigin"))).get(0);
-                Client clientDestination = new ArrayList<Client>(ClientRepository.getClient(res.getInt("ClientDestination"))).get(0);
-                Double money= res.getDouble("Money");
-                String mac= res.getString("Mac");
+                Client clientOrigin = ClientRepository.getClient(res.getInt("ClientOrigin"));
+                Client clientDestination = ClientRepository.getClient(res.getInt("ClientDestination"));
+                Double money = res.getDouble("Money");
+                String mac = res.getString("Mac");
                 Boolean integrity = new Boolean(res.getString("Integrity"));
                 SimpleDateFormat formatted = new SimpleDateFormat(
                         "yyyy-MM-dd HH:mm:ss");
                 Date date = formatted.parse(res.getString("Date"));
-                Message newMessage = new Message(id,clientOrigin,clientDestination,money,mac,integrity,date);
+                Message newMessage = new Message(id, clientOrigin, clientDestination, money, mac, integrity, date);
                 result.add(newMessage);
             }
             res.close();

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Properties;
+import persistence.DBConnection;
 
 public class ServerConfig {
 
@@ -64,6 +65,7 @@ public class ServerConfig {
 
     public void readConfig() throws FileNotFoundException, IOException, SQLException {
         try {
+            DBConnection.createDB();
             InputStream input = new FileInputStream("config.properties");
             Properties prop = new Properties();
             prop.load(input);
