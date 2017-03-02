@@ -22,11 +22,20 @@ public class WriterPlus {
         }
         return ok;
     }
+    
+    public boolean flush() {
+        boolean ok = true;
+        try {
+            out.flush();
+        } catch (IOException ex) {
+            ok = false;
+        }
+        return ok;
+    }
 
     public boolean close() {
         boolean ok = true;
         try {
-            out.flush();
             out.close();
         } catch (IOException ex) {
             ok = false;

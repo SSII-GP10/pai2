@@ -1,15 +1,13 @@
 package persistence;
 
+import domain.Client;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import domain.Client;
 
 public class ClientRepository {
 
@@ -23,8 +21,7 @@ public class ClientRepository {
             stm.executeUpdate(drop);
             String query = "CREATE TABLE IF NOT EXISTS CLIENT"
                     + "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-                    + "Account TEXT NOT NULL,"
-                    + "Key TEXT NOT NULL" + ")";
+                    + "NumberAccount TEXT NOT NULL," + "Key TEXT NOT NULL" + ")";
             stm.executeUpdate(query);
             stm.close();
         } catch (SQLException | ClassNotFoundException e) {
@@ -36,19 +33,16 @@ public class ClientRepository {
         insertClient(client.getNumberAccount(), client.getKey());
     }
 
-    public static void insertClient(String account,String key) throws SQLException {
+    public static void insertClient(String numberAccount, String key)
+            throws SQLException {
         try {
             DBConnection.checkPath();
             Class.forName("org.sqlite.JDBC");
             Connection con = DriverManager.getConnection(DBConnection.PATH);
             con.setAutoCommit(false);
             Statement stm = con.createStatement();
-       
-            String sql = "INSERT INTO CLIENT (Account,Key)"
-                    + "VALUES ('"
-                    + account
-                    + "','"
-                    + key+ "');";
+            String sql = "INSERT INTO CLIENT (NumberAccount,Key)"
+                    + "VALUES ('" + numberAccount + "','" + key + "');";
             stm.executeUpdate(sql);
             stm.close();
             con.commit();
@@ -58,16 +52,18 @@ public class ClientRepository {
         }
     }
 
-    public static Collection<Client> getClient(Integer id) throws SQLException {
-        String sql = "SELECT * FROM CLIENT WHERE ID = '" + id + "';";
-        return runQuery(sql);
+    public static Client getClient(String numberAccount)
+            throws SQLException {
+        String sql = "SELECT * FROM CLIENT WHERE NumberAccount = '" + numberAccount + "';";
+        Collection<Client> result = runQuery(sql);
+        Client client = result.iterator().next();
+        return client;
     }
 
-    public static Collection<Client> getAllClient() throws SQLException {
+    public static Collection<Client> getAllClients() throws SQLException {
         String sql = "SELECT * FROM CLIENT;";
         return runQuery(sql);
     }
-
 
     public static Collection<Client> runQuery(String sql) throws SQLException {
         try {
@@ -79,15 +75,11 @@ public class ClientRepository {
             Statement stm = con.createStatement();
             ResultSet res = stm.executeQuery(sql);
             while (res.next()) {
-                Integer id = res.getInt("ID");
-                String account = res.getString("Account");
+                int id = res.getInt("ID");
+                String numberAccount = res.getString("NumberAccount");
                 String key = res.getString("Key");
-               
-                Client newclient = new Client();
-                newclient.setId(id);
-                newclient.setNumberAccount(account);
-                newclient.setKey(key);
-                result.add(newclient);
+                Client newClient = new Client(id, numberAccount, key);
+                result.add(newClient);
             }
             res.close();
             stm.close();
@@ -97,5 +89,4 @@ public class ClientRepository {
             throw new SQLException(e.getMessage());
         }
     }
-
 }

@@ -11,6 +11,12 @@ public class Client {
     private String numberAccount;
     private String key;
 
+    public Client(int id, String numberAccount, String key){
+        this.id = id;
+        this.numberAccount = numberAccount;
+        this.key = key;
+    }
+    
     public int getId() {
         return id;
     }

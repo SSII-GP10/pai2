@@ -1,49 +1,65 @@
 package connections;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Writer;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.net.Socket;
 import javax.net.ServerSocketFactory;
 
 public class ServerConnection {
-    /*private ServerSocket socket;
 
-    public ServerConnection(int port) throws IOException {
-        ServerSocketFactory socketFactory = (ServerSocketFactory)ServerSocketFactory.getDefault();
-        socket = (ServerSocket)socketFactory.createServerSocket(port);
+    private int port;
+
+    private ServerSocket serverSocket;
+    private Socket socket;
+
+    public ServerConnection(int port) {
+        this.port = port;
     }
-    
-    private void runServer() {
-        while (true) {
-            try {
-                System.err.println("Esperando conexiones de clientes...");
-                BufferedReader input = new BufferedReader();
-                Socket socket = (Socket) serverSocket.accept();
-// abre un BufferedReader para leer los datos del cliente
-                BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-// abre un PrintWriter para enviar datos al cliente
-                PrintWriter output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-// se lee del cliente el mensaje y el macdelMensajeEnviado
-                String mensaje = input.readLine();
-                String macdelMensajeEnviado = input.readLine();
-// a continuación habría que calcular el macdelMensajeEnviado que podría ser //macdelMensajeCalculado y tener en cuenta los nonces para evitar los ataques de replay ......................................
-                if (macMensajeEnviado.equals(macdelMensajeCalculado)) {
-                    output.println("Mensaje enviado integro ");
-                } else {
-                    output.println("Mensaje enviado no integro.");
-                }
-                output.close();
-                input.close();
-                socket.close();
-            } catch (IOExceptionioException) {
-                ioException.printStackTrace();
-            }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void openServer() throws IOException {
+        try {
+            ServerSocketFactory socketFactory = (ServerSocketFactory) ServerSocketFactory.getDefault();
+            serverSocket = (ServerSocket) socketFactory.createServerSocket(port);
+        } catch (IOException ex) {
+            throw new IOException("Network problems");
         }
-    }*/
+    }
+
+    public void openConnections() throws IOException {
+        socket = (Socket) serverSocket.accept();
+    }
+
+    public OutputStream getOutputStream() throws IOException {
+        OutputStream out;
+        try {
+            out = socket.getOutputStream();
+        } catch (IOException ex) {
+            throw new IOException("Error connection with client");
+        }
+        return out;
+    }
+
+    public InputStream getInputStream() throws IOException {
+        InputStream in;
+        try {
+            in = socket.getInputStream();
+        } catch (IOException ex) {
+            throw new IOException("Error connection with client");
+        }
+        return in;
+    }
+
+    public void closeConnections() throws IOException {
+        socket.close();
+    }
 }
