@@ -1,4 +1,4 @@
-package connections;
+package communications;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,8 +12,7 @@ public class ServerConnection {
     private int port;
 
     private ServerSocket serverSocket;
-    private Socket socket;
-
+    
     public ServerConnection(int port) {
         this.port = port;
     }
@@ -35,31 +34,9 @@ public class ServerConnection {
         }
     }
 
-    public void openConnections() throws IOException {
-        socket = (Socket) serverSocket.accept();
+    public Socket openConnection() throws IOException {
+        Socket socket = (Socket) serverSocket.accept();
+        return socket;
     }
-
-    public OutputStream getOutputStream() throws IOException {
-        OutputStream out;
-        try {
-            out = socket.getOutputStream();
-        } catch (IOException ex) {
-            throw new IOException("Error connection with client");
-        }
-        return out;
-    }
-
-    public InputStream getInputStream() throws IOException {
-        InputStream in;
-        try {
-            in = socket.getInputStream();
-        } catch (IOException ex) {
-            throw new IOException("Error connection with client");
-        }
-        return in;
-    }
-
-    public void closeConnections() throws IOException {
-        socket.close();
-    }
+    
 }

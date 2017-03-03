@@ -59,7 +59,7 @@ public class KPI {
     }
 
     public String toString() {
-        String formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(getReportDate());
+        String formatted = new SimpleDateFormat("yyyy-MM-dd").format(getReportDate());
         return "Ratio: " + this.getRatio() + " | Positives: " + getPositives() + " | Total: " + getTotal()
                 + " | Report: " + formatted;
     }

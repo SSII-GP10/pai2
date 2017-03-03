@@ -25,10 +25,6 @@ public class MessageManager {
         MessageRepository.insertMessage(message);
     }
 
-    public Collection<Message> getSentMessages(Date date) throws SQLException {
-        return MessageRepository.getSentMessages(date);
-    }
-
     public Collection<Message> getMessagesWithNoIntegrity(Date date) throws SQLException {
         return MessageRepository.getMessagesWithNoIntegrity(date);
     }

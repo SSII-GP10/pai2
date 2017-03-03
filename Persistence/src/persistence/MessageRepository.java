@@ -31,7 +31,7 @@ public class MessageRepository {
                     + "Money DOUBLE NOT NULL,"
                     + "Mac TEXT NOT NULL,"
                     + "Integrity BOOLEAN NOT NULL,"
-                    + "Date TEXT NOT NULL,"
+                    + "Date DATE NOT NULL,"
                     + " FOREIGN KEY(ClientOrigin) REFERENCES CLIENT(ID),"
                     + " FOREIGN KEY(ClientDestination) REFERENCES CLIENT(ID)"
                     + ")";
@@ -53,7 +53,7 @@ public class MessageRepository {
             Connection con = DriverManager.getConnection(DBConnection.PATH);
             con.setAutoCommit(false);
             Statement stm = con.createStatement();
-            String formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            String formatted = new SimpleDateFormat("yyyy-MM-dd")
                     .format(date);
             String sql = "INSERT INTO MESSAGE (ClientOrigin,ClientDestination,Money,Mac,Integrity,Date)"
                     + "VALUES ('"
@@ -82,24 +82,17 @@ public class MessageRepository {
         return runQuery(sql);
     }
 
-    public static Collection<Message> getSentMessages(Date date) throws SQLException {
-        String formatted = new SimpleDateFormat("yyyy-MM-dd")
-                .format(date);
-        String sql = "SELECT * FROM MESSAGE WHERE Date BETWEEN '" + formatted + " 00:00:00.000' AND '" + formatted + " 23:59:59.997';";
-        return runQuery(sql);
-    }
-
     public static Collection<Message> getMessagesWithNoIntegrity(Date date) throws SQLException {
         String formatted = new SimpleDateFormat("yyyy-MM-dd")
                 .format(date);
-        String sql = "SELECT * FROM MESSAGE WHERE (Date BETWEEN '" + formatted + " 00:00:00.000' AND '" + formatted + " 23:59:59.997') AND Integrity =='false';";
+        String sql = "SELECT * FROM MESSAGE WHERE (Date BETWEEN '" + formatted + "' AND '" + formatted + "') AND Integrity =='false';";
         return runQuery(sql);
     }
 
     public static Collection<Message> getMessagesWithIntegrity(Date date) throws SQLException {
         String formatted = new SimpleDateFormat("yyyy-MM-dd")
                 .format(date);
-        String sql = "SELECT * FROM MESSAGE WHERE (Date BETWEEN '" + formatted + " 00:00:00.000' AND '" + formatted + " 23:59:59.997') AND Integrity =='true';";
+        String sql = "SELECT * FROM MESSAGE WHERE (Date BETWEEN '" + formatted + "' AND '" + formatted + "') AND Integrity =='true';";
         return runQuery(sql);
     }
 
@@ -111,7 +104,7 @@ public class MessageRepository {
     public static Collection<Message> getAllMessages(Date date) throws SQLException {
         String formatted = new SimpleDateFormat("yyyy-MM-dd")
                 .format(date);
-        String sql = "SELECT * FROM MESSAGE WHERE Date BETWEEN '" + formatted + " 00:00:00.000' AND '" + formatted + " 23:59:59.997';";
+        String sql = "SELECT * FROM MESSAGE WHERE Date BETWEEN '" + formatted + "' AND '" + formatted + "';";
         return runQuery(sql);
     }
 
@@ -132,7 +125,7 @@ public class MessageRepository {
                 String mac = res.getString("Mac");
                 Boolean integrity = new Boolean(res.getString("Integrity"));
                 SimpleDateFormat formatted = new SimpleDateFormat(
-                        "yyyy-MM-dd HH:mm:ss");
+                        "yyyy-MM-dd");
                 Date date = formatted.parse(res.getString("Date"));
                 Message newMessage = new Message(id, clientOrigin, clientDestination, money, mac, integrity, date);
                 result.add(newMessage);

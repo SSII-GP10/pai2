@@ -1,7 +1,9 @@
 package view;
 
 import business.ClientConfig;
-import connections.ClientConnection;
+import business.ExchangeClient;
+import communications.ClientCommunication;
+import communications.ClientConnection;
 import helpers.ReaderPlus;
 import helpers.Utilities;
 import helpers.WriterPlus;
@@ -13,16 +15,20 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class ClientFrame extends javax.swing.JFrame {
 
     private ClientConfig clientConfig;
+    private ExchangeClient exchange;
 
     public ClientFrame() {
         initComponents();
         clientConfig = ClientConfig.getInstance();
         readConfig();
+        exchange = new ExchangeClient(clientConfig);
     }
 
     /**
@@ -103,42 +109,13 @@ public class ClientFrame extends javax.swing.JFrame {
             String accountOrigin = clientConfig.getNumberAccount();
             String accountDestinate = this.accountField.getText();
             float amount = Float.parseFloat(this.amountField.getText());
-            String clientKey = clientConfig.getKey();
-            String algorithm = clientConfig.getAlgorithm();
-            String message = accountOrigin + "," + accountDestinate + "," + amount;
-            String mac = Utilities.calculateMac(message, clientKey, algorithm);
-            transfer(message, mac);
-        } catch (NumberFormatException | NullPointerException | UnsupportedEncodingException
-                | NoSuchAlgorithmException | InvalidKeyException ex) {
+            String message = exchange.transfer(accountOrigin, accountDestinate, amount);
+            JOptionPane.showMessageDialog(this, message);
+        } catch (IOException | NoSuchAlgorithmException | InvalidKeyException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
-    }//GEN-LAST:event_transferButtonActionPerformed
 
-    private void transfer(String message, String mac) {
-        try {
-            ClientConnection connection = new ClientConnection(clientConfig.getIpServer(), clientConfig.getPortServer());
-            connection.openConnection();
-            transferButton.setEnabled(false);
-            OutputStream outStream = connection.getOutputStream();
-            OutputStreamWriter outStreamWriter = new OutputStreamWriter(outStream);
-            WriterPlus writer = new WriterPlus(outStreamWriter, 3000);
-            writer.writeLine(message);
-            writer.writeLine(mac);
-            writer.flush();
-            InputStream inStream = connection.getInputStream();
-            InputStreamReader inStreamReader = new InputStreamReader(inStream);
-            ReaderPlus reader = new ReaderPlus(inStreamReader, 3000);
-            while(reader.moreLines()){
-                JOptionPane.showMessageDialog(this, reader.line());
-            }
-            writer.close();
-            reader.close();
-            connection.closeConnection();
-            transferButton.setEnabled(true);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
-        }
-    }
+    }//GEN-LAST:event_transferButtonActionPerformed
 
     private void readConfig() {
         try {

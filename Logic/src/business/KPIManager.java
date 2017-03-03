@@ -3,6 +3,7 @@ package business;
 import domain.KPI;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Date;
 import persistence.KPIRepository;
 
 public class KPIManager {
@@ -28,7 +29,7 @@ public class KPIManager {
     }
     
     public Collection<KPI> getKPIOfCurrentMonth() throws SQLException{
-        return KPIRepository.getKPIOfCurrentMonth();
+        return KPIRepository.getKPIOfCurrentMonth(new Date());
     }
     
 }

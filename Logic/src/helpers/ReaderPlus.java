@@ -14,7 +14,7 @@ public class ReaderPlus {
         line = "";
     }
 
-    public String line() throws IOException {
+    public String line() {
         return line;
     }
 
@@ -25,6 +25,15 @@ public class ReaderPlus {
             line = null;
         }
         return line != null;
+    }
+    
+    public String nextLine(){
+        try {
+            line = in.readLine();
+        } catch (IOException ex) {
+            line = null;
+        }
+        return line;
     }
 
     public boolean close() {

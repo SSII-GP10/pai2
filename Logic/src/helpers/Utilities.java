@@ -3,6 +3,7 @@ package helpers;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -11,6 +12,12 @@ public class Utilities {
 
     private static String[] hexDigits = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
 
+    public static int getOneNonce(){
+        SecureRandom secureRandom = new SecureRandom();
+        int nonce = secureRandom.nextInt();
+        return nonce;
+    }
+    
     public static String calculateMac(String message, String key, String algorithm) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
         String macAr = "";
         try {

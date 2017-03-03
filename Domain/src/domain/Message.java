@@ -85,7 +85,7 @@ public class Message {
     }
 
     public String toString() {
-        String formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(getDate());
+        String formatted = new SimpleDateFormat("yyyy-MM-dd").format(getDate());
         String integrityStr = this.isIntegrity() ? "Yes" : "No";
         return "Origin: " + this.getClientOrigin().toString() + " | Destination: " + this.getClientDestination().toString()
                 + " | Money: " + this.getMoney() + " | Integrity: " + integrityStr + " | " + "Date: " + formatted;

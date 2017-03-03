@@ -1,4 +1,4 @@
-package connections;
+package communications;
 
 import java.io.IOException;
 import java.io.InputStream;

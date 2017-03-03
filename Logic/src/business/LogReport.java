@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.TimerTask;
 
 public class LogReport extends TimerTask {
-    
+
     private static ServerConfig serverConfig;
     private static MessageManager messageManager;
 

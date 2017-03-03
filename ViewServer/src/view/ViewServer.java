@@ -4,7 +4,9 @@ import business.KPIRecolect;
 import business.KPIReport;
 import business.LogReport;
 import business.ServerConfig;
+import communications.ServerConnection;
 import java.io.IOException;
+import java.net.Socket;
 import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,13 +23,27 @@ public class ViewServer {
 
     public void start() {
         System.out.println("Starting server...");
-        ScheduledExecutorService timer = Executors.newScheduledThreadPool(3);
-        timer.scheduleAtFixedRate(new LogReport(), 0, 1, TimeUnit.MINUTES);
-        timer.scheduleAtFixedRate(new KPIRecolect(), 0, 1, TimeUnit.MINUTES);
-        timer.scheduleAtFixedRate(new KPIReport(), 0, 5, TimeUnit.MINUTES);
+        startProcesses();
+        ServerConnection server = new ServerConnection(serverConfig.getPort());
+        try {
+            server.openServer();
+            while(true){
+                Socket socket = server.openConnection();
+                // Lanzar hilo
+            }
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
-    public void readConfig() {
+    private void startProcesses(){
+        ScheduledExecutorService timer = Executors.newScheduledThreadPool(3);
+        timer.scheduleAtFixedRate(new LogReport(), 3, 3, TimeUnit.MINUTES);
+        timer.scheduleAtFixedRate(new KPIRecolect(), 1, 1, TimeUnit.MINUTES);
+        timer.scheduleAtFixedRate(new KPIReport(), 3, 3, TimeUnit.MINUTES);
+    }
+    
+    private void readConfig() {
         try {
             serverConfig.readConfig();
         } catch (IOException | SQLException ex) {

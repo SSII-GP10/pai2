@@ -1,5 +1,6 @@
 package persistence;
 
+import domain.KPI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -8,13 +9,8 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.stream.Collectors;
-
-import domain.KPI;
 
 public class KPIRepository {
 
@@ -30,7 +26,7 @@ public class KPIRepository {
                     + "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
                     + "Positives NUMERIC NOT NULL,"
                     + "Total NUMERIC NOT NULL,"
-                    + "ReportDate TEXT NOT NULL" + ")";
+                    + "ReportDate DATE NOT NULL" + ")";
             stm.executeUpdate(query);
             stm.close();
         } catch (SQLException | ClassNotFoundException e) {
@@ -50,7 +46,7 @@ public class KPIRepository {
             Connection con = DriverManager.getConnection(DBConnection.PATH);
             con.setAutoCommit(false);
             Statement stm = con.createStatement();
-            String formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            String formatted = new SimpleDateFormat("yyyy-MM-dd")
                     .format(date);
             String sql = "INSERT INTO KPI (Positives,Total,ReportDate)"
                     + "VALUES ('"
@@ -77,24 +73,13 @@ public class KPIRepository {
         String sql = "SELECT * FROM KPI;";
         return runQuery(sql);
     }
-
-    public static Collection<KPI> getKPIOfCurrentMonth() throws SQLException {
-
-        return getKPIOfMonth(new Date(System.currentTimeMillis()));
-    }
-
-    public static Collection<KPI> getKPIOfMonth(Date date) throws SQLException {
-        Collection<KPI> result = getAllKPI();
-        Calendar Cdate = new GregorianCalendar();
-        Cdate.setTime(date);
-        int month = Cdate.get(Calendar.MONTH);
-        result = result.stream().filter(x -> {
-            Calendar cal = new GregorianCalendar();
-            cal.setTime(x.getReportDate());
-            int xmonth = cal.get(GregorianCalendar.MONTH);
-            return xmonth == month;
-        }).collect(Collectors.toList());
-        return result;
+    
+    public static Collection<KPI> getKPIOfCurrentMonth(Date date) throws SQLException {
+        String month = new SimpleDateFormat("MM").format(date);
+        String year = new SimpleDateFormat("yyyy").format(date);
+        String sql = "SELECT * FROM KPI WHERE strftime('%m', ReportDate) = '" 
+                + month + "' AND strftime('%Y', ReportDate) = '" + year + "';";
+        return runQuery(sql);
     }
 
     public static Collection<KPI> runQuery(String sql) throws SQLException {
@@ -111,7 +96,7 @@ public class KPIRepository {
                 Integer positives = res.getInt("Positives");
                 Integer total = res.getInt("Total");
                 SimpleDateFormat formatted = new SimpleDateFormat(
-                        "yyyy-MM-dd HH:mm:ss");
+                        "yyyy-MM-dd");
                 Date date = formatted.parse(res.getString("ReportDate"));
                 KPI newkpi = new KPI(id, positives, total, date);
                 result.add(newkpi);
