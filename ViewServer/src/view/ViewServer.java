@@ -4,6 +4,7 @@ import business.KPIRecolect;
 import business.KPIReport;
 import business.LogReport;
 import business.ServerConfig;
+import business.ExchangeServer;
 import communications.ServerConnection;
 import java.io.IOException;
 import java.net.Socket;
@@ -29,7 +30,7 @@ public class ViewServer {
             server.openServer();
             while(true){
                 Socket socket = server.openConnection();
-                // Lanzar hilo
+                new Thread(new ExchangeServer(serverConfig, socket)).start();
             }
         } catch (IOException ex) {
             System.out.println(ex.getMessage());

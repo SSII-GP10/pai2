@@ -17,6 +17,7 @@ public class DBConnection {
                 ClientRepository.createClientTable();
                 MessageRepository.createMessageTable();
                 KPIRepository.createKPITable();
+                NonceRepository.createNonceTable();
             } catch (ClassNotFoundException | SQLException e) {
                 throw new SQLException("Error: Cant connect to DB.");
             }

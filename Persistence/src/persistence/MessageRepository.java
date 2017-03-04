@@ -26,14 +26,12 @@ public class MessageRepository {
             stm.executeUpdate(drop);
             String query = "CREATE TABLE IF NOT EXISTS MESSAGE"
                     + "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-                    + "ClientOrigin INTEGER NOT NULL,"
-                    + "ClientDestination INTEGER NOT NULL,"
-                    + "Money DOUBLE NOT NULL,"
+                    + "Client INTEGER NOT NULL,"
+                    + "Message TEXT NOT NULL,"
                     + "Mac TEXT NOT NULL,"
                     + "Integrity BOOLEAN NOT NULL,"
                     + "Date DATE NOT NULL,"
-                    + " FOREIGN KEY(ClientOrigin) REFERENCES CLIENT(ID),"
-                    + " FOREIGN KEY(ClientDestination) REFERENCES CLIENT(ID)"
+                    + " FOREIGN KEY(Client) REFERENCES CLIENT(ID)"
                     + ")";
             stm.executeUpdate(query);
             stm.close();
@@ -43,10 +41,10 @@ public class MessageRepository {
     }
 
     public static void insertMessage(Message message) throws SQLException {
-        insertMessage(message.getClientOrigin(), message.getClientDestination(), message.getMoney(), message.getMac(), message.isIntegrity(), message.getDate());
+        insertMessage(message.getClient(), message.getMessage(), message.getMac(), message.isIntegrity(), message.getDate());
     }
 
-    public static void insertMessage(Client clientOrigin, Client clientDestination, Double money, String mac, Boolean integrity, Date date) throws SQLException {
+    public static void insertMessage(Client client, String message, String mac, Boolean integrity, Date date) throws SQLException {
         try {
             DBConnection.checkPath();
             Class.forName("org.sqlite.JDBC");
@@ -55,13 +53,11 @@ public class MessageRepository {
             Statement stm = con.createStatement();
             String formatted = new SimpleDateFormat("yyyy-MM-dd")
                     .format(date);
-            String sql = "INSERT INTO MESSAGE (ClientOrigin,ClientDestination,Money,Mac,Integrity,Date)"
+            String sql = "INSERT INTO MESSAGE (Client,Message,Mac,Integrity,Date)"
                     + "VALUES ('"
-                    + clientOrigin.getId()
+                    + client.getId()
                     + "','"
-                    + clientDestination.getId()
-                    + "','"
-                    + money
+                    + message
                     + "','"
                     + mac
                     + "','"
@@ -119,15 +115,14 @@ public class MessageRepository {
             ResultSet res = stm.executeQuery(sql);
             while (res.next()) {
                 Integer id = res.getInt("ID");
-                Client clientOrigin = ClientRepository.getClient(res.getInt("ClientOrigin"));
-                Client clientDestination = ClientRepository.getClient(res.getInt("ClientDestination"));
-                Double money = res.getDouble("Money");
+                Client client = null;//ClientRepository.getClient(res.getInt("Client"));
+                String message = res.getString("Message");
                 String mac = res.getString("Mac");
                 Boolean integrity = new Boolean(res.getString("Integrity"));
                 SimpleDateFormat formatted = new SimpleDateFormat(
                         "yyyy-MM-dd");
                 Date date = formatted.parse(res.getString("Date"));
-                Message newMessage = new Message(id, clientOrigin, clientDestination, money, mac, integrity, date);
+                Message newMessage = new Message(id, client, message, mac, integrity, date);
                 result.add(newMessage);
             }
             res.close();

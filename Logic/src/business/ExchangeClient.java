@@ -21,13 +21,13 @@ public class ExchangeClient {
     }
 
     public String transfer(String accountOrigin, String accountDestinate, float amount) throws IOException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
-        exchangeNonces();
+        exchangeNonces(accountOrigin);
         return transferAndCheck(accountOrigin, accountDestinate, amount);
     }
 
-    private void exchangeNonces() throws IOException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+    private void exchangeNonces(String accountClient) throws IOException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
         clientNonce = Utilities.getOneNonce();
-        String clientNonceStr = clientNonce + "";
+        String clientNonceStr = accountClient + "-" + clientNonce;
         String serverNonceStr = communication.sendMessage(clientNonceStr);
         serverNonce = Integer.parseInt(serverNonceStr);
     }

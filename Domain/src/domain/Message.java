@@ -11,18 +11,16 @@ import java.util.Date;
 public class Message {
 
     private int id;
-    private Client clientOrigin;
-    private Client clientDestination;
-    private double money;
+    private Client client;
+    private String message;
     private String mac;
     private boolean integrity;
     private Date date;
 
-    public Message(int id, Client clientOrigin, Client clientDestination, double money, String mac, boolean integrity, Date date) {
+    public Message(int id, Client client, String message, String mac, boolean integrity, Date date) {
         this.id = id;
-        this.clientOrigin = clientOrigin;
-        this.clientDestination = clientDestination;
-        this.money = money;
+        this.client = client;
+        this.message = message;
         this.mac = mac;
         this.integrity = integrity;
         this.date = date;
@@ -36,28 +34,20 @@ public class Message {
         this.id = id;
     }
 
-    public Client getClientOrigin() {
-        return clientOrigin;
+    public Client getClient() {
+        return client;
     }
 
-    public void setClientOrigin(Client clientOrigin) {
-        this.clientOrigin = clientOrigin;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
-    public Client getClientDestination() {
-        return clientDestination;
+    public String getMessage() {
+        return message;
     }
 
-    public void setClientDestination(Client clientDestination) {
-        this.clientDestination = clientDestination;
-    }
-
-    public double getMoney() {
-        return money;
-    }
-
-    public void setMoney(double money) {
-        this.money = money;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getMac() {
@@ -87,7 +77,8 @@ public class Message {
     public String toString() {
         String formatted = new SimpleDateFormat("yyyy-MM-dd").format(getDate());
         String integrityStr = this.isIntegrity() ? "Yes" : "No";
-        return "Origin: " + this.getClientOrigin().toString() + " | Destination: " + this.getClientDestination().toString()
-                + " | Money: " + this.getMoney() + " | Integrity: " + integrityStr + " | " + "Date: " + formatted;
+        return "Client: " + this.getClient().toString() + " | Message: " + this.getMessage()
+                + " | Mac: " + this.getMac() + " | Integrity: " + integrityStr + " | " + "Date: " + formatted;
     }
+
 }
