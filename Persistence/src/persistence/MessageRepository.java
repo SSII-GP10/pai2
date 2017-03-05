@@ -158,8 +158,10 @@ public class MessageRepository {
             }
             
             for(Entry<Message,Integer> tem:temporaryMap.entrySet()){
+            	String getClient = "SELECT * FROM CLIENT WHERE ID = '" + tem.getValue() + "';";
+            	ResultSet clients = stm.executeQuery(getClient);
+            	Client client = new Client(clients.getInt("ID"),clients.getString("NumberAccount"),clients.getString("Key"));
             	
-            	Client client = ClientRepository.getClient(tem.getValue());
             	Message n = tem.getKey();
             	n.setClient(client);
             	result.add(n);
