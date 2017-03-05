@@ -10,11 +10,41 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import domain.Client;
 import domain.Message;
 
 public class MessageRepository {
+	public static void main(String[] args) {
+		try {
+			DBConnection.createDB();
+			
+			Collection<Message> all = getAllMessages();
+			System.out.println(all);
+			
+			Collection<Message> todays=getAllMessages(new Date(System.currentTimeMillis()));
+			System.out.println("-------------------------------------------");
+			System.out.println(todays);
+			
+			
+			Collection<Message> others = runQuery("SELECT * FROM MESSAGE WHERE ID='"+1+"'");
+			System.out.println(others);
+			
+			Collection<Message> noIn = getMessagesWithNoIntegrity(new Date(System.currentTimeMillis()));
+			System.out.println(noIn);
+			
+			Collection<Message> yesIn = getMessagesWithIntegrity(new Date(System.currentTimeMillis()));
+			System.out.println(yesIn);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
     public static void createMessageTable() throws SQLException {
         try {
@@ -113,9 +143,10 @@ public class MessageRepository {
             con.setAutoCommit(false);
             Statement stm = con.createStatement();
             ResultSet res = stm.executeQuery(sql);
+            Map<Message,Integer> temporaryMap = new HashMap<Message,Integer>();
             while (res.next()) {
                 Integer id = res.getInt("ID");
-                Client client = null;//ClientRepository.getClient(res.getInt("Client"));
+                Client client = null;
                 String message = res.getString("Message");
                 String mac = res.getString("Mac");
                 Boolean integrity = new Boolean(res.getString("Integrity"));
@@ -123,7 +154,15 @@ public class MessageRepository {
                         "yyyy-MM-dd");
                 Date date = formatted.parse(res.getString("Date"));
                 Message newMessage = new Message(id, client, message, mac, integrity, date);
-                result.add(newMessage);
+                temporaryMap.put(newMessage, res.getInt("Client"));
+            }
+            
+            for(Entry<Message,Integer> tem:temporaryMap.entrySet()){
+            	
+            	Client client = ClientRepository.getClient(tem.getValue());
+            	Message n = tem.getKey();
+            	n.setClient(client);
+            	result.add(n);
             }
             res.close();
             stm.close();
