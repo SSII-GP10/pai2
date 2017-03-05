@@ -2,21 +2,9 @@ package view;
 
 import business.ClientConfig;
 import business.ExchangeClient;
-import communications.ClientCommunication;
-import communications.ClientConnection;
-import helpers.ReaderPlus;
-import helpers.Utilities;
-import helpers.WriterPlus;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class ClientFrame extends javax.swing.JFrame {

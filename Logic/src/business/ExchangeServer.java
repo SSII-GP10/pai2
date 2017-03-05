@@ -1,18 +1,11 @@
 package business;
 
 import communications.ServerCommunication;
-import communications.ServerSocket;
 import domain.Client;
 import domain.Message;
 import domain.Nonce;
-import helpers.ReaderPlus;
 import helpers.Utilities;
-import helpers.WriterPlus;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.security.InvalidKeyException;
@@ -82,6 +75,7 @@ public class ExchangeServer implements Runnable {
     }
 
     private void transfer(String[] partsMessage, String message, String mac) throws IOException, SQLException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+        System.out.println("Proccesing transfer | Client " + partsMessage[0] + " to " + partsMessage[1] + " | Amount: " + partsMessage[2]);
         String clientAccount = partsMessage[0];
         Client client = clientManager.getClient(clientAccount);
         Nonce nonceDb = nonceManager.getNonce(client);

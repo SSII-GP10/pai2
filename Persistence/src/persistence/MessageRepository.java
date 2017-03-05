@@ -10,41 +10,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+
+import domain.Client;
+import domain.Message;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import domain.Client;
-import domain.Message;
-
 public class MessageRepository {
-	public static void main(String[] args) {
-		try {
-			DBConnection.createDB();
-			
-			Collection<Message> all = getAllMessages();
-			System.out.println(all);
-			
-			Collection<Message> todays=getAllMessages(new Date(System.currentTimeMillis()));
-			System.out.println("-------------------------------------------");
-			System.out.println(todays);
-			
-			
-			Collection<Message> others = runQuery("SELECT * FROM MESSAGE WHERE ID='"+1+"'");
-			System.out.println(others);
-			
-			Collection<Message> noIn = getMessagesWithNoIntegrity(new Date(System.currentTimeMillis()));
-			System.out.println(noIn);
-			
-			Collection<Message> yesIn = getMessagesWithIntegrity(new Date(System.currentTimeMillis()));
-			System.out.println(yesIn);
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
 
     public static void createMessageTable() throws SQLException {
         try {
@@ -126,7 +99,7 @@ public class MessageRepository {
         String sql = "SELECT * FROM MESSAGE;";
         return runQuery(sql);
     }
-    
+
     public static Collection<Message> getAllMessages(Date date) throws SQLException {
         String formatted = new SimpleDateFormat("yyyy-MM-dd")
                 .format(date);
@@ -143,7 +116,7 @@ public class MessageRepository {
             con.setAutoCommit(false);
             Statement stm = con.createStatement();
             ResultSet res = stm.executeQuery(sql);
-            Map<Message,Integer> temporaryMap = new HashMap<Message,Integer>();
+            Map<Message, Integer> temporaryMap = new HashMap<Message, Integer>();
             while (res.next()) {
                 Integer id = res.getInt("ID");
                 Client client = null;
@@ -156,15 +129,15 @@ public class MessageRepository {
                 Message newMessage = new Message(id, client, message, mac, integrity, date);
                 temporaryMap.put(newMessage, res.getInt("Client"));
             }
-            
-            for(Entry<Message,Integer> tem:temporaryMap.entrySet()){
-            	String getClient = "SELECT * FROM CLIENT WHERE ID = '" + tem.getValue() + "';";
-            	ResultSet clients = stm.executeQuery(getClient);
-            	Client client = new Client(clients.getInt("ID"),clients.getString("NumberAccount"),clients.getString("Key"));
-            	
-            	Message n = tem.getKey();
-            	n.setClient(client);
-            	result.add(n);
+
+            for (Entry<Message, Integer> tem : temporaryMap.entrySet()) {
+                String getClient = "SELECT * FROM CLIENT WHERE ID = '" + tem.getValue() + "';";
+                ResultSet clients = stm.executeQuery(getClient);
+                Client client = new Client(clients.getInt("ID"), clients.getString("NumberAccount"), clients.getString("Key"));
+
+                Message n = tem.getKey();
+                n.setClient(client);
+                result.add(n);
             }
             res.close();
             stm.close();

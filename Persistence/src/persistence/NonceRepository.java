@@ -1,5 +1,7 @@
 package persistence;
 
+import domain.Client;
+import domain.Nonce;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -11,28 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import domain.Client;
-import domain.Nonce;
-
 public class NonceRepository {
 
-	public static void main(String[] args) {
-		
-		try {
-			DBConnection.createDB();
-			Client newC = new Client(1,"sdfsdf","asdf5asdf");
-			ClientRepository.insertClient(newC);
-			Nonce newn = new Nonce(1,newC,5,6);
-			insertNonce(newn);
-			
-			
-			Collection<Nonce> res =runQuery("SELECT * FROM NONCE;");
-			System.out.println(res);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
     public static void createNonceTable() throws SQLException {
         try {
             DBConnection.checkPath();
@@ -114,31 +96,25 @@ public class NonceRepository {
             con.setAutoCommit(false);
             Statement stm = con.createStatement();
             ResultSet res = stm.executeQuery(sql);
-            Map<Nonce,Integer> temporaryMap = new HashMap<Nonce,Integer>();
-            //Creo un mapa temporal donde guardaré los Nonce SIN client y el id de client
+            Map<Nonce, Integer> temporaryMap = new HashMap<Nonce, Integer>();
             while (res.next()) {
                 Integer id = res.getInt("ID");
-                
                 Client client = null;
                 Integer nonceClient = res.getInt("ClientNonce");
                 Integer nonceServer = res.getInt("ServerNonce");
                 Nonce newNonce = new Nonce(id, client, nonceClient, nonceServer);
                 temporaryMap.put(newNonce, res.getInt("Client"));
             }
-            //ahora que la primera query ha terminado podemos recorrer el mapa e ir pidiendo los clientes
-            // para terminar de armas los Nonce
-            for(Entry<Nonce,Integer> tem:temporaryMap.entrySet()){
-            	
-            	String getClient = "SELECT * FROM CLIENT WHERE ID = '" + tem.getValue() + "';";
-            	ResultSet clients = stm.executeQuery(getClient);
-            	Client client = new Client(clients.getInt("ID"),clients.getString("NumberAccount"),clients.getString("Key"));
-            	
-            	Nonce n = tem.getKey();
-            	n.setClient(client);
-            	result.add(n);
+            for (Entry<Nonce, Integer> tem : temporaryMap.entrySet()) {
+
+                String getClient = "SELECT * FROM CLIENT WHERE ID = '" + tem.getValue() + "';";
+                ResultSet clients = stm.executeQuery(getClient);
+                Client client = new Client(clients.getInt("ID"), clients.getString("NumberAccount"), clients.getString("Key"));
+                Nonce n = tem.getKey();
+                n.setClient(client);
+                result.add(n);
             }
-            
-            
+
             res.close();
             stm.close();
             con.close();
